@@ -16,21 +16,14 @@ export default class OrdersListState {
     this.initialized = val;
   }
 
-  constructor() {
+  constructor(page: string) {
     makeAutoObservable(this);
     this.history = createBrowserHistory();
+    this.page = Number(page)
   }
 
   setOrders(orders: OrdersListItem[]): void {
     this.orders = orders;
-  }
-
-  startLoading(): void {
-    this.loading = true;
-  }
-
-  stopLoading(): void {
-    this.loading = false;
   }
 
   setPage(page: number): void {
@@ -43,16 +36,12 @@ export default class OrdersListState {
   }
 
   nextPage(): void {
-    if (this.page >= this.totalPages) return;
     this.setPage(this.page + 1);
-    this.loading = true;
     this.loadOrders();
   }
 
   prevPage(): void {
-    if (this.page <= 1) return;
     this.setPage(this.page - 1);
-    this.loading = true;
     this.loadOrders();
   }
 
@@ -70,12 +59,27 @@ export default class OrdersListState {
 
   async loadOrders() {
     this.loading = true;
-    this.loading = false;
+
+    client
+      .query(GET_ORDERS_QUERY, { page: this.page })
+      .toPromise()
+      .then(res => {
+        const {
+          pagination: { totalPageCount },
+          orders,
+        } = res.data.getOrders;
+        this.setTotalPages(totalPageCount);
+        this.setOrders(orders);
+        this.loading = false;
+      })
+      .catch(err => {
+        console.log(err);
+        this.loading = false;
+      });
   }
 
   initialize() {
-    if (this.initialized) return;
-    this.initialized = true;
     this.loadOrders();
+    this.initialized = true;
   }
 }

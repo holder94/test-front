@@ -4,8 +4,8 @@ import { SingleOrderItem } from "~/screens/Orders/Show/types";
 import styles from "./styles.m.styl";
 
 const Item = observer(
-  ({ item }: { item: SingleOrderItem }): JSX.Element => {
-    return <div className={styles.item}>{item.offer.displayName}</div>;
+  ({ item, number }: { item: SingleOrderItem, number: number }): JSX.Element => {
+    return <div className={styles.item}>{`Item#${number + 1}: ${item.offer.displayName}`}</div>;
   }
 );
 

@@ -10,6 +10,10 @@ function Index(): JSX.Element {
   const [globalState] = React.useState(new GlobalState());
   if (window.location.pathname === "/") window.location.pathname = "/orders/";
 
+  if (!globalState.initialized) {
+    globalState.initialize()
+  }
+
   return (
     <GlobalStateProvider value={globalState}>
       <Router>

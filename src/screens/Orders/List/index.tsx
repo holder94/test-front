@@ -12,7 +12,9 @@ import ListItem from "./components/ListItem";
 
 const OrdersList = observer(
   (): JSX.Element => {
-    const [state] = React.useState(new OrdersListState());
+    const pageNumber = new URLSearchParams(window.location.search).get('page') || '1'
+
+    const [state] = React.useState(new OrdersListState(pageNumber));
 
     useEffect(() => {
       if (state.initialized) return;
@@ -25,22 +27,22 @@ const OrdersList = observer(
           <div className={styles.screen}>
             {state.loading && <span>Loading...</span>}
             {!state.loading && (
-              <div className={styles.table}>
-                <div className={styles.head}>
-                  <div className={styles.row}>
-                    <div>Номер</div>
-                    <div>Создан</div>
-                    <div>Доставка</div>
-                    <div>В работе</div>
-                    <div>Статус</div>
-                  </div>
-                </div>
-                <div className={styles.body}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Номер</th>
+                    <th>Создан</th>
+                    <th>Доставка</th>
+                    <th>В работе</th>
+                    <th>Статус</th>
+                  </tr>
+                </thead>
+                <tbody>
                   {map(state.orders, (order: OrdersListItem, index: number) => (
                     <ListItem order={order} key={index} />
                   ))}
-                </div>
-              </div>
+                </tbody>
+              </table>
             )}
             <div className={styles.pagination}>
               <Button

@@ -31,18 +31,17 @@ export class GlobalState {
     productStatuses: null,
   };
 
+  initialized = false;
+
   constructor() {
     makeAutoObservable(this);
   }
 
   get orderStatuses() {
-    if (this.status.orderStatuses === null) {
-    }
     return this.data.orderStatuses;
   }
 
   setOrderStatuses(statuses: CrmType[]) {
-    console.log(statuses);
     this.data.orderStatuses = statuses;
     this.status.orderStatuses = true;
   }
@@ -58,15 +57,29 @@ export class GlobalState {
   }
 
   get productStatuses() {
-    if (this.status.productStatuses === null) {
-    }
     return this.data.productStatuses;
   }
 
   get deliveryTypes() {
-    if (this.status.deliveryTypes === null) {
-    }
     return this.data.deliveryTypes;
+  }
+
+  async initialize() {
+    let res = await client
+      .query(PRODUCT_STATUSES_QUERY)
+      .toPromise()
+    this.setProductStatuses(res.data.productStatuses)
+
+    res = await client
+      .query(ORDER_STATUSES_QUERY)
+      .toPromise()
+    this.setOrderStatuses(res.data.orderStatuses)
+
+    res = await client
+      .query(DELIVERY_TYPES_QUERY)
+      .toPromise()
+    this.setDeliveryTypes(res.data.deliveryTypes)
+    this.initialized = true
   }
 }
 

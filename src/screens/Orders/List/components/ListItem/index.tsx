@@ -4,7 +4,6 @@ import { OrdersListItem } from "../../types";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import "moment/locale/ru";
-import Tag from "components/Tag";
 import OrderStatus from "components/OrderStatus";
 import DeliveryType from "components/DeliveryType";
 import { Link } from "react-router-dom";
@@ -12,19 +11,19 @@ import { Link } from "react-router-dom";
 const ListItem = observer(
   ({ order }: { order: OrdersListItem }): JSX.Element => {
     return (
-      <div className={styles.row}>
-        <div className={styles.orderNumber}>
+      <tr>
+        <td className={`${styles.orderNumber} ${styles.item}`}>
           <Link to={`/orders/${order.id}`}>{order.number}</Link>
-        </div>
-        <div>{moment(order.createdAt).format("DD.MM.YYYY HH:mm")}</div>
-        <div title={order.delivery?.code}>
-          {order.delivery && <DeliveryType code={order.delivery?.code} />}
-        </div>
-        <div>{moment().from(order.createdAt, true)}</div>
-        <div title={order.status}>
+        </td>
+        <td className={styles.item}>{moment(order.createdAt).format("DD.MM.YYYY HH:mm")}</td>
+        <td title={order.delivery?.code} className={styles.item}>
+          {order.delivery && <DeliveryType code={order.delivery?.code || 'no data'} />}
+        </td>
+        <td className={styles.item}>{moment().from(order.createdAt, true)}</td>
+        <td title={order.status} className={styles.item}>
           <OrderStatus code={order.status} />
-        </div>
-      </div>
+        </td>
+      </tr>
     );
   }
 );
